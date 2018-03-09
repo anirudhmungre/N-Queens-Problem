@@ -1,0 +1,62 @@
+from timeit import default_timer
+
+board = []
+n = 0
+currCol = 0
+
+##This method checks if a queen exists in a row, column or diagonal on the board and returns a 
+##True (If an opposing queen does not exist) or False (If an opposing queen does exist) boolean value.
+def check(col, row):
+    if (row in board): #Check Horizontal
+        return False
+    
+    for i in range(1, col+1): #Check Diagonals
+        if(row - i == board[col-i]): #Upper Left Diagonal Check
+            return False
+        elif(row + i == board[col-i]): #Lower Left Diagonal Check
+            return False
+    return True
+
+##This method recursively moves through board positions and determines
+##N-Queens solutions once the last column is passed
+def NQueens(col, row):
+    global currCol
+    if(row == n):
+        if(col == 0):
+            return
+        else:
+            board[col] = -1
+            currCol = col
+            return
+    elif(check(col, row)):
+        board[col] = row
+        if(col == n-1): #If a queen is placed in the last column it means a solution is found because board is filled
+            print(board)
+            NQueens(col, row+1)
+        else:
+            NQueens(col+1, 0) #Move to next col if previous column has solution
+    else:
+        NQueens(col, row+1) #If queen place is conflicted move to next row
+    if(col == currCol-1 and row < n): #Return recursion until at previous column unless it is last possible solution
+        row = board[col]
+        board[col] = -1
+        NQueens(col, row+1)
+        
+def createBoard():
+    for i in range(0, n):
+        board.append(-1) #Creates a board of n size based on NQueen wanted
+    return
+
+def determineSize():
+    global n
+    n = int(input("Please Input the amount of queens to solve NQueens: ")) #User inputs how many queens they want
+    
+
+determineSize()
+print("\nSOLUTIONS")
+print("-"*(n*3))
+start = default_timer() #Check total runtime
+createBoard()
+NQueens(0, 0)
+stop = default_timer() #Check total runtime
+print ("Runtime: ", (stop - start)*1000, "milliseconds") #Print runtime for whole program
